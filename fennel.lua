@@ -47,13 +47,13 @@ local LIST_MT = { 'LIST',
 
 -- Load code with an environment in all recent Lua versions
 local function loadCode(code, environment, filename)
-    environment = environment or _ENV or _G
-    if setfenv and loadstring then
-        local f = assert(loadstring(code, filename))
+    environment = environment or _G
+    if setfenv and terralib.loadstring then
+        local f = assert(terralib.loadstring(code))
         setfenv(f, environment)
         return f
     else
-        return assert(load(code, filename, "t", environment))
+        return assert(terralib.load(code, filename, "t", environment))
     end
 end
 
@@ -1142,7 +1142,6 @@ SPECIALS['fying'] = function(ast, scope, parent)
             and not isMultiSym(argPair[1])
             and not isMultiSym(argPair[2]) then
                 argNameList[i] = declareLocal(argPair[1], {}, fScope, ast) .. " : " .. deref(argPair[2])
-                print(argNameList[i])
         else
             assertCompile(false, 'expected (symbol type) pair for fying parameter', ast)
         end
@@ -1674,7 +1673,7 @@ local function repl(options)
     end
 
     local env = opts.env or setmetatable({}, {
-        __index = _ENV or _G
+        __index = _G
     })
 
     local function defaultReadChunk()
@@ -1832,7 +1831,7 @@ local function makeCompilerEnv(ast, scope, parent)
         [globalMangling("sym?")] = isSym,
         [globalMangling("table?")] = isTable,
         [globalMangling("varg?")] = isVarg,
-    }, { __index = _ENV or _G })
+    }, { __index = _G })
 end
 
 local function macroGlobals(env)
