@@ -46,3 +46,4 @@ luac.out
 /wiki
 
 *~
+.dir-locals.el
