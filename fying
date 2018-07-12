@@ -5,7 +5,7 @@ package.path = fennel_dir .. "?.lua;" .. package.path
 local fennel = require('fennel')
 
 local help = [[
-Usage: fennel [FLAG] [FILE]
+Usage: fying [FLAG] [FILE]
 
   --repl          :  Launch an interactive repl session
   --compile FILES :  Compile files and write their Lua to stdout
@@ -53,7 +53,7 @@ if arg[1] == "--repl" or #arg == 0 then
         -- pass in options so fennerlrc can make changes to it
         dosafe(initFilename, options, options)
     end
-    print("Welcome to fennel!")
+    print("Welcome to fying!")
     fennel.repl(options)
 elseif arg[1] == "--compile" then
     -- Handle options
