@@ -1896,6 +1896,9 @@ local stdmacros = [===[
  :defn (fn [name args ...]
          (assert (sym? name) "defn: function names must be symbols")
          (list (sym :fn) name args ...))
+ :defying (fn [name args ...]
+            (assert (sym? name) "defying: fying names must be symbols")
+            (list (sym :fying) name args ...))
  :when (fn [condition body1 ...]
          (assert body1 "expected body")
          (list (sym 'if') condition
