@@ -1,14 +1,14 @@
-#!/usr/bin/env lua
+#!/usr/bin/env terra
 
 local fennel_dir = arg[0]:match("(.-)[^\\/]+$")
-package.path = fennel_dir .. "?.lua;" .. package.path
+package.path = fennel_dir .. "?.lua;" .. package.path -- need to expand this to .terra yah?
 local fennel = require('fennel')
 
 local help = [[
 Usage: fying [FLAG] [FILE]
 
   --repl          :  Launch an interactive repl session
-  --compile FILES :  Compile files and write their Lua to stdout
+  --compile FILES :  Compile files and write their Terra to stdout
   --help          :  Display this text
 
   When not given a flag, runs the file given as the first argument.]]
