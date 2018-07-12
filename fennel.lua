@@ -1109,6 +1109,62 @@ SPECIALS['fn'] = function(ast, scope, parent)
     return fnName
 end
 
+SPECIALS['fying'] = function(ast, scope, parent)
+    local fScope = makeScope(scope)
+    local fChunk = {}
+    local index = 2
+    local fnName = isSym(ast[index])
+    local isLocalFn
+    fScope.vararg = false
+    if fnName and fnName[1] ~= 'nil' then
+        isLocalFn = not isMultiSym(fnName[1])
+        if isLocalFn then
+            fnName = declareLocal(fnName, {}, scope, ast)
+        else
+            fnName = symbolToExpression(fnName, scope)[1]
+        end
+        index = index + 1
+    else
+        isLocalFn = true
+        fnName = gensym(scope)
+    end
+    local argList = assertCompile(isTable(ast[index]),
+                                  'expected vector arg list [a b ...]', ast)
+    local argNameList = {}
+    for i = 1, #argList do
+        local argPair = argList[i]
+        if isList(argPair)
+            and #argPair == 2
+            and isSym(argPair[1])
+            and isSym(argPair[2])
+            and argPair[1] ~= "nil"
+            and argPair[2] ~= "nil"
+            and not isMultiSym(argPair[1])
+            and not isMultiSym(argPair[2]) then
+                argNameList[i] = declareLocal(argPair[1], {}, fScope, ast) .. " : " .. deref(argPair[2])
+                print(argNameList[i])
+        else
+            assertCompile(false, 'expected (symbol type) pair for fying parameter', ast)
+        end
+    end
+    for i = index + 1, #ast do
+        compile1(ast[i], fScope, fChunk, {
+            tail = i == #ast,
+            nval = i ~= #ast and 0 or nil
+        })
+    end
+    if isLocalFn then
+        emit(parent, ('local terra %s(%s)')
+                 :format(fnName, table.concat(argNameList, ', ')), ast)
+    else
+        emit(parent, ('%s = terra(%s)')
+                 :format(fnName, table.concat(argNameList, ', ')), ast)
+    end
+    emit(parent, fChunk, ast)
+    emit(parent, 'end', ast)
+    return fnName
+end
+
 SPECIALS['luaexpr'] = function(ast)
     return tostring(ast[2])
 end
